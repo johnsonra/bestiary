@@ -1,6 +1,7 @@
 \name{Encounters}
 
 \alias{rencounter}
+\alias{rcreatures}
 
 \title{
 Functions to set up encounters
@@ -11,16 +12,20 @@ These functions (more to come) can be used to set up planned or random encounter
 }
 
 \usage{
-rencounter(n, cname)
+rcreatures(n, cname)
+rencounter(n, ...)
 }
 
 \arguments{
   \item{n}{Number of creatures to initialize.}
   \item{cname}{Name of species.}
+  \item{...}{Values to filter on. See details for more information.}
 }
 
 \details{
-See print method for what is shown to the user. Most details are kept hidden when interacting with a creature using the functions in this package.
+Need to add details on the ... argument of rencounter(). See code for details until I get around to this.
+
+See print method for what is shown to the user when printing a creature object. Most details are kept hidden when interacting with a creature using the functions in this package.
 }
 
 \value{
@@ -49,7 +54,7 @@ Randy Johnson
 }
 
 \examples{
-ogres <- rencounter(2, 'Ogre')
+ogres <- rcreatures(2, 'Ogre')
 
 print(ogres)
 }

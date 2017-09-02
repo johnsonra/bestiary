@@ -40,7 +40,7 @@ Randy Johnson
 }
 
 \examples{
-ogres <- rencounter(2, 'Ogre')
+ogres <- rcreatures(2, 'Ogre')
 
 # Successful attack
 # Now we have more information about these creatures' armor class

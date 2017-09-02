@@ -1,6 +1,6 @@
 export(
     # Encounters
-    rencounter,
+    rcreatures, rencounter,
 
     # Interactions with creatures
     attack, damage, savingThrow

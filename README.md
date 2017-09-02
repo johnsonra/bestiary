@@ -12,8 +12,9 @@ See the latest compiled build here: [http://johnsonra.github.io/bestiary/](http:
 * 02/27/16: Added monsters from the SRD
 
 ## To Do
-* Sort by location, sub-types, tags, CR, level, etc.
-* More Monsters from more sources!
+* Filter by language in rencounter().
+* Add and filter by terain type in rencounter().
+* Add random monster generator based on instructions for creating your own monsters in the Dungeon Master's guide.
 
 ## Structure
 Creatures can be found inside `_posts/`. Each creature gets its own post, written and stored as a [Markdown](http://daringfireball.net/projects/markdown/basics) file. The date is arbitrary and never displayed, but still necessary for [Jekyll](http://jekyllrb.com) to process the posts properly.
