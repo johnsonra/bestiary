@@ -1,0 +1,9 @@
+Package: bestiary
+Version: 0.1
+Date: 2017-09-02
+Title: DnD 5e Bestiary
+Author: Randy Johnson <randy.n.julie@gmail.com>
+Maintainer: Randy Johnson <randy.n.julie@gmail.com>
+Depends: R, tidyverse
+Description: Creatures for DnD 5e and functions to facilitate encounters
+License: Revised BSD

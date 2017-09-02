@@ -1,0 +1,9 @@
+export(
+    # Encounters
+    rencounter,
+
+    # Interactions with creatures
+    attack, damage, savingThrow
+)
+
+S3method(print, creature)
