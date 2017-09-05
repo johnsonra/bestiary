@@ -1,4 +1,4 @@
-# print methods
+##### print methods
 
 
 print.creatureList <- function(x, ...)
@@ -27,15 +27,22 @@ print.creature <- function(x, ...)
             paste0('|')
 
         if(health == '----------')
-            health <- 'Barely holding on to life'
+            health <- 'Unconcious'
     }else{
         health = "0"
     }
 
-    cat('\n', x$name, '\n',
-        'AC:', ac, '\n',
+    cat(' AC:', ac, '\n',
         'Initiative:', x$initiative, '\n',
         'Health:', health, '\n')
 
     invisible(1)
+}
+
+
+##### addition methods
+
+`+.creatureList` <- function(e1, e2)
+{
+    append(e1, e2)
 }

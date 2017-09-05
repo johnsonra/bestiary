@@ -8,3 +8,4 @@ export(
 
 S3method(print, creature)
 S3method(print, creatureList)
+S3method(`+`, creatureList)
