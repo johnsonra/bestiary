@@ -45,15 +45,15 @@ savingThrow <- function(x, dc, dcMod, n = 1)
     # add the modifier
     if(is.numeric(dcMod)) # if numeric, just add it
     {
-        outcome <- throw + dcMod >= dc
+        outcome <- throw + dcMod
     }else{ # if not numeric, assume it is character
-        outcome <- throw + x[[n]][[dcMod]] >= dc
+        outcome <- throw + x[[n]][[dcMod]]
     }
 
-    if(outcome)
+    if(outcome >= dc)
     {
-        print("Saving throw succeeded")
+        print0(outome, ": Saving throw succeeded")
     }else{
-        print("Saving throw failed")
+        print0(outcome, ": Saving throw failed")
     }
 }
