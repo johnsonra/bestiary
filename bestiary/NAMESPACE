@@ -3,7 +3,10 @@ export(
     rcreatures, rencounter,
 
     # Interactions with creatures
-    attack, damage, savingThrow
+    attack, damage, savingThrow,
+
+    # other
+    print.creature
 )
 
 S3method(print, creature)

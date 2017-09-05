@@ -27,9 +27,12 @@ rcreatures <- function(n, cname)
                             INTmod = csub$INTmod,
                             WISmod = csub$WISmod,
                             CHAmod = csub$CHAmod,
-                            details = csub$description,
-                            class = 'creature')
+                            details = csub$description)
+        class(retval[[i]]) <- 'creature'
     }
+
+    names(retval) <- paste(cname, 1:n)
+    class(retval) <- 'creatureList'
 
     return(retval)
 }

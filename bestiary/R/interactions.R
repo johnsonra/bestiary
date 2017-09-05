@@ -43,7 +43,7 @@ savingThrow <- function(x, dc, dcMod, n = 1)
     throw <- sample(1:20, 1)
 
     # add the modifier
-    if(is.numeric(mod)) # if numeric, just add it
+    if(is.numeric(dcMod)) # if numeric, just add it
     {
         outcome <- throw + dcMod >= dc
     }else{ # if not numeric, assume it is character
