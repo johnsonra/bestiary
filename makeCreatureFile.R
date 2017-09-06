@@ -4,9 +4,9 @@
 
 library(tidyverse)
 
-# get files in ../_posts
-files <- system('ls ../_posts', intern = TRUE)
-dat <- paste0('../_posts/', files) %>%
+# get files in _posts
+files <- system('ls _posts', intern = TRUE)
+dat <- paste0('_posts/', files) %>%
        map(readLines)
 
 # function to extract names
@@ -237,6 +237,69 @@ get.xp <- function(d)
         as.numeric()
 }
 
+# actions
+get.actions <- function(d)
+{
+    startHere <- grep('**Actions**', d, fixed = TRUE)
+
+    # if no attacks, return NULL
+    if(length(startHere) == 0)
+        return(NULL)
+
+    if(d[3] == 'title: "Draft Horse"') # this one is not formatted consistently. :P
+    {
+        d[startHere] <- gsub('**Actions** Hooves.', '***Hooves***', d[startHere], fixed = TRUE)
+    }
+
+    action <- 1 # increments with each new action
+
+    retval <- list()
+
+    for(i in startHere:length(d))
+    {
+        # skip lines if they are blank or start with **Actions**, ...
+        if(d[i] == '' |
+           substr(d[i], 1, 11) == '**Actions**' |
+           substr(d[i], 1, 21) == '**Legendary Actions**')
+        {
+            next
+        }
+
+        # exit if we get to a new section
+        if(substr(d[i], 1, 3) != '***')
+            break
+
+        # grab next action
+        retval[[action]] <- strsplit(d[i], '***', fixed = TRUE)[[1]][3] %>%
+                            gsub(pattern = '^ ', replacement = '') %>% # remove leading spaces
+                            gsub(pattern = ' $', replacement = '') # remove trailing spaces
+
+        # get name
+        tmp <- strsplit(d[i], '***', fixed = TRUE)[[1]][2]
+
+        # some have caveats/limitations in title
+        if(length(grep("(", tmp, fixed = TRUE)) > 0)
+        {
+            tmp <- strsplit(tmp, "")[[1]]
+
+            # move caveats/limitations to description
+            retval[[action]] <- paste(paste(tmp[grep("(", tmp, fixed = TRUE):
+                                                grep(")", tmp, fixed = TRUE)], collapse = ''),
+                                 retval[[action]])
+
+            # keep title, minus the caveats/limitations, and traling space
+            tmp <- paste(tmp[1:(grep("(", tmp, fixed = TRUE) - 2)], collapse = '')
+        }
+
+        names(retval)[action] <- gsub('.', '', tmp, fixed = TRUE) # remove trailing '.'
+
+        # increment action number
+        action <- action + 1
+    }
+
+    return(retval)
+}
+
 # description
 get.description <- function(d)
 {
@@ -269,6 +332,8 @@ creatures <- data_frame(name = sapply(dat, get.name),
                         CHAmod = sapply(dat, get.mods, mod = 'CHA'),
                         challenge = sapply(dat, get.cr),
                         xp = sapply(dat, get.xp),
-                        description = sapply(dat, get.description))
+                        actions = lapply(dat, get.actions))
+# going to be missing some details here...
+#                        description = sapply(dat, get.description))
 
 save(creatures, file = '../bestiary/data/creatures.RData')
