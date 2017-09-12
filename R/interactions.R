@@ -6,8 +6,10 @@
 # dam = damage (negative number adds back HP)
 # dc = difficulty class
 # mod = saving throw modifier
-# n = creature number
+# n = creature number(s)
+# ac = armor class
 
+# check to see if an atack on a creature in x is effective
 attack <- function(x, ar, n = 1)
 {
     outcome <- ar > x[[n]]$AC
@@ -27,9 +29,23 @@ attack <- function(x, ar, n = 1)
     if(!outcome & ar > x[[n]]$minACthresh)
         x[[n]]$minACthresh <- ar
 
+    # update all armor classes for monsters of like species
+    for(i in 1:length(x))
+    {
+        if(i == n) # already did this one
+            next
+
+        if(x[[i]]$species == x[[n]]$species)
+        {
+            x[[i]]$maxACthresh <- x[[n]]$maxACthresh
+            x[[i]]$minACthresh <- x[[n]]$minACthresh
+        }
+    }
+
     invisible(x)
 }
 
+# deal damage to a creature in x
 damage <- function(x, dam, n)
 {
     x[[n]]$damage <- x[[n]]$damage + dam
@@ -37,6 +53,7 @@ damage <- function(x, dam, n)
     return(x)
 }
 
+# perform a saving throw for a creature in x
 savingThrow <- function(x, dc, dcMod, n = 1)
 {
     # make the throw
@@ -52,8 +69,28 @@ savingThrow <- function(x, dc, dcMod, n = 1)
 
     if(outcome >= dc)
     {
-        print0(outome, ": Saving throw succeeded")
+        print(paste0(outcome, ": Saving throw succeeded"))
     }else{
-        print0(outcome, ": Saving throw failed")
+        print(paste0(outcome, ": Saving throw failed"))
     }
+}
+
+# simulate an attack on a character from a mob of creatures
+# n = number of creatures who are attacking
+# ac = armor class of character being attacked
+# dcMod = modifier to attach die
+# dam = function to calculate damage by one creature if successful
+#       (or simply the amount of damage dealt per monster)
+mobAttack <- function(n, ac, dcMod, dam)
+{
+    # roll for attack
+    attackDice <- sample(1:20, size = n, replace = TRUE) + dcMod
+
+    # if the attack was successful, calculate damage
+    successes <- sum(attackDice > ac)
+
+    if(successes == 0)
+        return(0)
+
+    return(sum(unlist(replicate(successes, dam))))
 }

@@ -1,9 +1,12 @@
 export(
     # Encounters
-    rcreatures, rencounter,
+    rcreatures, rencounter, difficultyCheck,
 
     # Interactions with creatures
-    attack, damage, savingThrow
+    attack, damage, savingThrow, mobAttack,
+
+    # Dice
+    ndspm
 )
 
 S3method(print, creature)

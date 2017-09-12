@@ -11,7 +11,7 @@ rcreatures <- function(n, cname)
     retval <- list()
     for(i in 1:n)
     {
-        retval[[i]] <- list(name = paste(cname, i),
+        retval[[i]] <- list(species = cname,
                             HP = with(csub, sum(sample(1:HPdie, size = HPnDice, replace = TRUE)) +
                                             HPmod),
                             damage = 0,
@@ -27,7 +27,7 @@ rcreatures <- function(n, cname)
                             INTmod = csub$INTmod,
                             WISmod = csub$WISmod,
                             CHAmod = csub$CHAmod,
-                            details = csub$description)
+                            actions = csub$actions)
         class(retval[[i]]) <- 'creature'
     }
 
@@ -110,3 +110,15 @@ rencounter <- function(n, ...)
 
     return(rcreatures(n, species))
 }
+
+difficultyCheck <- function(difficulty, playerLevels, monsterXPlevels)
+{
+    difficultyCoefs <- 3.8 + c(easy = - 0.5, medium = 0, hard = 0.4, deadly = 0.7)
+
+    errorTerm <- log(sum(monsterXPlevels)) - (difficultyCoefs[difficulty] +
+                                              length(playerLevels) * 0.5 +
+                                              mean(playerLevels) * 0.2)
+
+    return(errorTerm)
+}
+
