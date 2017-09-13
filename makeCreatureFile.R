@@ -37,6 +37,9 @@ get.attitude <- function(d)
     if(retval %in% c('any chaotic alignment'))
         return('chaotic')
 
+    if(retval == 'construct')
+        return('')
+
     return({strsplit(retval, ' ') %>%
             sapply(`[`, 1)})
 }
@@ -61,8 +64,11 @@ get.morality <- function(d)
     if(retval %in% c('any non-good alignment'))
         return('non-good')
 
-    if(retval %in% c('neutral'))
+    if(retval %in% c('neutral', 'unaligned'))
         return('neutral')
+
+    if(retval == 'construct')
+        return('')
 
     return({strsplit(retval, ' ') %>%
             sapply(`[`, 2)})
@@ -124,8 +130,16 @@ get.ac <- function(d)
 # summary Hit Points
 get.hp.summary <- function(d)
 {
-    grep("**Hit Points**", d, value = TRUE, fixed = TRUE)[[1]] %>%
+    retval <- grep("**Hit Points**", d, value = TRUE, fixed = TRUE)[[1]] %>%
         gsub(pattern = "**Hit Points** ", replacement = "", fixed = TRUE)
+
+    if(retval != "0")
+        return(retval)
+
+    retval <- grep("***Hit Points.***", d, value = TRUE, fixed = TRUE)[[1]] %>%
+        gsub(pattern = "***Hit Points.*** ", replacement = "", fixed = TRUE)
+
+    return(retval)
 }
 
 # mean Hit Points
@@ -141,27 +155,43 @@ get.mean.hp <- function(d)
 # Hit Point num dice
 get.n.hp.dice <- function(d)
 {
-    grep("**Hit Points**", d, value = TRUE, fixed = TRUE)[[1]] %>%
-        gsub(pattern = "**Hit Points** ", replacement = "", fixed = TRUE) %>%
-        strsplit(split = ' ', fixed = TRUE) %>%
+    retval <- grep("**Hit Points**", d, value = TRUE, fixed = TRUE)[[1]] %>%
+        gsub(pattern = "**Hit Points** ", replacement = "", fixed = TRUE)
+
+    if(retval == '0')
+        return(0)
+
+    retval <- strsplit(retval, split = ' ', fixed = TRUE) %>%
         sapply(`[`, 2) %>%
         strsplit(split = 'd') %>%
         sapply(`[`, 1) %>%
         gsub(pattern = '(', replacement = '', fixed = TRUE) %>%
         as.numeric()
+
+    return(retval)
 }
 
 # Hit Point die (4, 6, 8, 10, 12, 20, 100)
 get.hp.die <- function(d)
 {
-    grep("**Hit Points**", d, value = TRUE, fixed = TRUE)[[1]] %>%
-        gsub(pattern = "**Hit Points** ", replacement = "", fixed = TRUE) %>%
-        strsplit(split = ' ', fixed = TRUE) %>%
+    retval <- grep("**Hit Points**", d, value = TRUE, fixed = TRUE)[[1]] %>%
+        gsub(pattern = "**Hit Points** ", replacement = "", fixed = TRUE)
+
+    if(retval == '0')
+        return(0)
+
+    retval <- strsplit(retval, split = ' ', fixed = TRUE) %>%
         sapply(`[`, 2) %>%
         strsplit(split = 'd') %>%
         sapply(`[`, 2) %>%
+        strsplit(split = '+', fixed = TRUE) %>%
+        sapply(`[`, 1) %>%
+        strsplit(split = '-', fixed = TRUE) %>%
+        sapply(`[`, 1) %>%
         gsub(pattern = ')', replacement = '', fixed = TRUE) %>%
         as.numeric()
+
+    return(retval)
 }
 
 # Hit Point modifier
@@ -169,7 +199,7 @@ get.hp.mod <- function(d)
 {
     retval <- grep("**Hit Points**", d, value = TRUE, fixed = TRUE)[[1]] %>%
         gsub(pattern = "**Hit Points** ", replacement = "", fixed = TRUE) %>%
-        strsplit(split = '+ ', fixed = TRUE) %>%
+        strsplit(split = '+', fixed = TRUE) %>%
         sapply(`[`, 2) %>%
         gsub(pattern = ')', replacement = '', fixed = TRUE)
 
@@ -182,10 +212,21 @@ get.hp.mod <- function(d)
 # speed
 get.speed <- function(d)
 {
-    grep("**Speed**", d, value = TRUE, fixed = TRUE)[[1]] %>%
+    retval <- grep("**Speed**", d, value = TRUE, fixed = TRUE)[[1]] %>%
         strsplit(split = ' ', fixed = TRUE) %>%
-        sapply(`[`, 2) %>%
-        as.numeric()
+        sapply(`[`, 2)
+
+    if(retval %in% c('swim', 'fly'))
+        return({grep("**Speed**", d, value = TRUE, fixed = TRUE)[[1]] %>%
+                   strsplit(split = ' ', fixed = TRUE) %>%
+                   sapply(`[`, 3) %>%
+                   as.numeric()})
+
+    # inconsistent formatting of Elder Brain
+    if(retval == '5ft.,')
+        return(5)
+
+    return(as.numeric(retval))
 }
 
 # Get modifier for the mod attribute
@@ -222,6 +263,9 @@ get.cr <- function(d)
 
     if(retval == '1/2')
         return(0.5)
+
+    if(retval == 'l')
+        return(-1)
 
     return(as.numeric(retval))
 }
@@ -277,19 +321,19 @@ get.actions <- function(d)
         # get name
         tmp <- strsplit(d[i], '***', fixed = TRUE)[[1]][2]
 
-        # some have caveats/limitations in title
-        if(length(grep("(", tmp, fixed = TRUE)) > 0)
-        {
-            tmp <- strsplit(tmp, "")[[1]]
-
-            # move caveats/limitations to description
-            retval[[action]] <- paste(paste(tmp[grep("(", tmp, fixed = TRUE):
-                                                grep(")", tmp, fixed = TRUE)], collapse = ''),
-                                 retval[[action]])
-
-            # keep title, minus the caveats/limitations, and traling space
-            tmp <- paste(tmp[1:(grep("(", tmp, fixed = TRUE) - 2)], collapse = '')
-        }
+        # # some have caveats/limitations in title
+        # if(length(grep("(", tmp, fixed = TRUE)) > 0)
+        # {
+        #     tmp <- strsplit(tmp, "")[[1]]
+        #
+        #     # move caveats/limitations to description
+        #     retval[[action]] <- paste(paste(tmp[grep("(", tmp, fixed = TRUE):
+        #                                         grep(")", tmp, fixed = TRUE)], collapse = ''),
+        #                          retval[[action]])
+        #
+        #     # keep title, minus the caveats/limitations, and traling space
+        #     tmp <- paste(tmp[1:(grep("(", tmp, fixed = TRUE) - 2)], collapse = '')
+        # }
 
         names(retval)[action] <- gsub('.', '', tmp, fixed = TRUE) # remove trailing '.'
 
@@ -316,7 +360,7 @@ creatures <- data_frame(name = sapply(dat, get.name),
                         morality = sapply(dat, get.morality),
                         size = sapply(dat, get.size),
                         type = sapply(dat, get.type),
-                        tags = sapply(dat, get.tags),
+                        tags = lapply(dat, get.tags),
                         armor.class = sapply(dat, get.ac),
                         HPsummary = sapply(dat, get.hp.summary),
                         HPmean = sapply(dat, get.mean.hp),
