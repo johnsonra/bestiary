@@ -2,7 +2,7 @@
 
 Bestiary is a mobile-friendly 5e compendium of creatures that organizes them in various classifications and strengths.
 
-See the latest compiled build here: [http://johnsonra.github.io/bestiary/](http://chisaipete.github.io/bestiary/)
+See the latest compiled build here: [http://johnsonra.github.io/bestiary/](http://johnsonra.github.io/bestiary/)
 
 ## Changelog
 * 09/01/17: Forked from chisaipete, updated a few links in README.md (master) and index.html (ghpages), and added the R branch for an R package. See that branch for specific details on the R package.
