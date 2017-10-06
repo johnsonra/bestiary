@@ -5,6 +5,9 @@
 # cname = name of creature type
 rcreatures <- function(n, cname)
 {
+    if(is.na(n) | n == 0)
+        return(list())
+
     data(creatures)
     csub <- filter(creatures, name == cname)
 
