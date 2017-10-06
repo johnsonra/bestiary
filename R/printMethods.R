@@ -32,7 +32,8 @@ print.creature <- function(x, ...)
         health = "0"
     }
 
-    cat(' AC:', ac, '\n',
+    cat(x$name,
+        ' AC:', ac, '\n',
         'Initiative:', x$initiative, '\n',
         'Health:', health, '\n')
 

@@ -12,6 +12,7 @@ rcreatures <- function(n, cname)
     for(i in 1:n)
     {
         retval[[i]] <- list(species = cname,
+                            name = paste(cname, i),
                             HP = with(csub, sum(sample(1:HPdie, size = HPnDice, replace = TRUE)) +
                                             HPmod),
                             damage = 0,
