@@ -3,6 +3,8 @@
     <meta name="viewport" content="width=device-width">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
+    <link rel="shortcut icon" href="{{ '/favicon.ico' | prepend: site.baseurl }}" type="image/x-icon">
+
     <title>{% if page.title %}{{ page.title }}{% else %}{{ site.title }}{% endif %}</title>
     <meta name="description" content="{{ site.description }}">
 
@@ -25,4 +27,8 @@
         document.getElementById("menuIcon").addEventListener( 'click' , menuClick );
 	    }
     </script>
+    {% if site.tags != "" %}
+    {% include collect_tags.html %}
+    {% endif %}
 </head>
+<a id="top"></a>
